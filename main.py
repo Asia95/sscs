@@ -72,7 +72,6 @@ def inclusion(log_index, artifact_filepath, debug=False):
         proof["root_hash"],
     )
     print("Offline verification successful")
-    pass
 
 def get_latest_checkpoint(debug=False):
     # Fetch the latest checkpoint from rekor
@@ -99,11 +98,11 @@ def consistency(prev_checkpoint, debug=False):
     latest = get_latest_checkpoint(debug)
 
     if str(prev_checkpoint["treeID"]) != str(latest["treeID"]):
-        raise ValueError(
-            f"the checkpoints come form different trees"
-        )
+        raise ValueError("the checkpoints come form different trees")
     if prev_checkpoint["treeSize"] > latest["treeSize"]:
         raise ValueError("previous tree size is larger than the current one")
+    if prev_checkpoint["treeSize"] == latest["treeSize"]:
+        raise ValueError("previous checkpoint is the same as the latest one")
 
     # ask Rekor for the consistency proof between the two sizes
     response = requests.get(
@@ -126,7 +125,6 @@ def consistency(prev_checkpoint, debug=False):
         latest["rootHash"],
     )
     print("Consistency verification successful")
-    pass
 
 def main():
     debug = False
